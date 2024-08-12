@@ -38,45 +38,58 @@ class _HomeScreenState extends State<_HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
-              child: TextField(
-                controller: controller,
-                decoration: InputDecoration(
-                  constraints: const BoxConstraints(maxWidth: 256),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                  labelText: 'Enter Duration (in Seconds)',
-                  hintText: '30',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(16),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                child: TextField(
+                  controller: controller,
+                  decoration: InputDecoration(
+                    constraints: const BoxConstraints(maxWidth: 256),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                    labelText: 'Enter Duration (in Seconds)',
+                    hintText: '30',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                   ),
+                  onChanged: (value) =>
+                      setState(() => duration = int.tryParse(value) ?? 30),
                 ),
-                onChanged: (value) =>
-                    setState(() => duration = int.tryParse(value) ?? 30),
               ),
-            ),
-            ElevatedButton(
-              child: const Text('Open Timer'),
-              onPressed: () async {
-                final result = await Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => _TimerScreen(
-                        duration: int.tryParse(controller.text) ?? 30),
-                  ),
-                );
-
-                for (int i in (result as List<int>)) {
-                  print(i);
-                }
-              },
-            ),
-          ],
+              ElevatedButton(
+                child: const Text('Open Timer'),
+                onPressed: () => _openTimer(duration: int.tryParse(controller.text) ?? 30),
+              ),
+              const SizedBox(height: 16),
+              Wrap(
+                spacing: 16,
+                children: [
+                  OutlinedButton(onPressed: () => _openTimer(duration: 60), child: const Text('01:00')),
+                  OutlinedButton(onPressed: () => _openTimer(duration: 120), child: const Text('02:00')),
+                  OutlinedButton(onPressed: () => _openTimer(duration: 300), child: const Text('05:00')),
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  _openTimer({required int duration}) async {
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => _TimerScreen(
+            duration: duration),
+      ),
+    );
+
+    for (int i in (result as List<int>)) {
+      print(i);
+    }
   }
 }
 
